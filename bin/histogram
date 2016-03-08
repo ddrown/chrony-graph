@@ -1,0 +1,21 @@
+#!/usr/bin/perl
+
+use strict;
+
+my($column) = shift;
+my($multiply) = shift;
+
+my(%counts);
+while(<>) {
+  chomp($_);
+  my(@line) = split(/ +/);
+  my $data = $line[$column];
+  if(length($multiply)) {
+    $data = int($data * $multiply);
+  }
+  $counts{$data}++;
+}
+
+foreach my $count (sort { $a <=> $b } keys %counts) {
+  print $count," ",$counts{$count},"\n";
+}

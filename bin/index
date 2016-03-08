@@ -1,0 +1,25 @@
+#!/usr/bin/perl
+
+use strict;
+use Cwd;
+use File::Basename;
+
+my $RUN=cwd();
+$RUN = basename($RUN);
+
+open(NOTES,"<","notes");
+my $NOTES=join("",<NOTES>);
+close(NOTES);
+$NOTES =~ s/</&lt;/g;
+$NOTES =~ s/>/&gt;/g;
+$NOTES =~ s/&/&amp;/g;
+
+my $time = scalar(gmtime());
+
+open(TMPL,"<","index.html.tmpl");
+while(<TMPL>) {
+  s/__RUN__/$RUN/g;
+  s/__NOTES__/$NOTES/g;
+  s/__TIME__/$time/g;
+  print;
+}

@@ -1,0 +1,52 @@
+#!/bin/sh
+
+(
+../bin/graph-header all-offset.png "%1.0f us" "all clocks (offset)" ""
+../bin/foreach-stat "'__FILE__' using 1:(\$4*1000000) title '__TITLE__' with line \\"
+echo 
+) | gnuplot
+
+#(
+#  ../bin/graph-header remote-strat1.png "%1.0f us" "offset of remote strat1s" ""
+#  i=0
+#  while read file title; do
+#    if [ $i != 0 ]; then
+#      echo -n ,
+#    else
+#      i=1
+#    fi
+#    echo "'$file' using 1:(\$4*1000000) title '$title' with line \\"
+#  done < ../titles
+#) | gnuplot
+#
+#(
+#  ../bin/graph-header remote-strat1-downstream.png "%1.0f us" "offset-rtt/2 of remote strat1s" ""
+#  i=0
+#  while read file title; do
+#    measurements_file=`echo $file | sed 's/^statistics/measurements/'`
+#    if [ -f $measurements_file ]; then
+#      if [ $i != 0 ]; then
+#        echo -n ,
+#      else
+#        i=1
+#      fi
+#      echo "'$measurements_file' using 1:((\$11-\$12/2)*1000000) title '$title' with line \\"
+#    fi
+#  done < ../titles
+#  echo
+#) | gnuplot
+
+while read file title; do
+  imagename=`echo $file | sed 's/:/_/g'`
+  measurements_file=`echo $file | sed 's/^statistics/measurements/'`
+  (
+    ../bin/graph-header remote-${imagename}.png "%1.0f us" "offset of $title" ""
+    if [ -f $measurements_file ]; then
+      echo "'$measurements_file' using 1:(\$11*1000000) title 'offset' with line, \\"
+      echo "'$measurements_file' using 1:((\$11+\$12/2)*1000000) title 'offset+rtt/2' with line, \\"
+      echo "'$measurements_file' using 1:((\$11-\$12/2)*1000000) title 'offset-rtt/2' with line"
+    else
+      echo "'$file' using 1:(\$4*1000000) title 'offset' with line"
+    fi
+  ) | gnuplot
+done < ../titles

@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+
+use strict;
+
+my $filename = shift;
+if(not defined $filename) {
+  die("I need an output filename");
+}
+
+while(<>) {
+  if(/^(\d+) (\S+)/) {
+    open(OUT,">>$filename.$2");
+    print OUT $_;
+    close(OUT);
+  }
+}

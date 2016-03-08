@@ -1,0 +1,6 @@
+#!/usr/bin/perl
+
+my $number = shift;
+
+print $number * <>;
+print "\n";

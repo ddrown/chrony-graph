@@ -1,0 +1,23 @@
+#!/usr/bin/perl
+
+use strict;
+
+while(<>) {
+  chomp($_);
+  my($timestamp,$snr_data) = /^(\d+) (.*)/;
+  my(@line) = split(/, /,$snr_data);
+  my(%counts);
+  for(my $i = 0; $i < @line; $i++) {
+    if($line[$i] =~ /^(\d*):(\d+)$/) {
+      my($snr,$count) = ($1,$2);
+      if($snr > 0) {
+        $counts{"+1"} += $count;
+      } else {
+        $counts{-1} += $count;
+      }
+    } else {
+      print STDERR "$0 unknown part: $_\n";
+    }
+  }
+  print $timestamp," ",$counts{"-1"}," ",$counts{"+1"},"\n";
+}

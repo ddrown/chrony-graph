@@ -1,0 +1,83 @@
+#!/bin/sh
+
+gnuplot <<EOF
+set terminal png size 900,600
+set xdata time
+set timefmt "%s"
+set output "local-clock.png"
+set grid
+set xlabel "Time"
+set format x "%d-%H:%M"
+set xtic rotate by -45 scale 0
+set ytics format "%1.2f us" nomirror
+set y2tics format "%2.3f ppm" nomirror
+set title "local clock"
+set key bottom right box
+plot \
+ "tracking.log" using 1:(\$6*1000000) title "offset" with linespoints, \
+ "tracking.log" using 1:4 title "local clock error" with linespoints axis x1y2
+EOF
+
+NINETYFIVE=`../bin/percentile 8 95 tracking.log | ../bin/mul 1000000`
+NINETYNINE=`../bin/percentile 8 99 tracking.log | ../bin/mul 1000000`
+FIVE=`../bin/percentile 8 5 tracking.log | ../bin/mul 1000000`
+ONE=`../bin/percentile 8 1 tracking.log | ../bin/mul 1000000`
+NF_M_F=`echo $NINETYFIVE - $FIVE | bc`
+NN_M_O=`echo $NINETYNINE - $ONE | bc`
+gnuplot <<EOF
+set terminal png size 900,600
+set xdata time
+set timefmt "%s"
+set output "local-clock-stddev.png"
+set grid
+set xlabel "Time"
+set format x "%d-%H:%M"
+set xtic rotate by -45 scale 0
+set ytics format "%1.2f us" nomirror
+set title "local clock stddev"
+set key top right box
+set label 1 gprintf("99%% = $NINETYNINE us",99) at graph 0.01,0.95 left front
+set label 2 gprintf("95%% = $NINETYFIVE us",95) at graph 0.01,0.9 left front
+set label 3 gprintf(" 5%% = $FIVE us",5) at graph 0.01,0.85 left front
+set label 4 gprintf(" 1%% = $ONE us",1) at graph 0.01,0.8 left front
+set label 5 gprintf("95%% - 5%% = $NF_M_F us",90) at graph 0.01,0.75 left front
+set label 6 gprintf("99%% - 1%% = $NN_M_O us",98) at graph 0.01,0.7 left front
+plot \
+ "tracking.log" using 1:(\$9*1000000) title "stddev" with linespoints, \
+ $NINETYNINE title "99th percentile", \
+ $NINETYFIVE title "95th percentile", \
+ $FIVE title "5th percentile", \
+ $ONE title "1st percentile"
+EOF
+
+NINETYFIVE=`../bin/percentile 4 95 tracking.log`
+NINETYNINE=`../bin/percentile 4 99 tracking.log`
+FIVE=`../bin/percentile 4 5 tracking.log`
+ONE=`../bin/percentile 4 1 tracking.log`
+NF_M_F=`echo $NINETYFIVE - $FIVE | bc`
+NN_M_O=`echo $NINETYNINE - $ONE | bc`
+gnuplot <<EOF
+set terminal png size 900,600
+set xdata time
+set timefmt "%s"
+set output "local-clock-skew.png"
+set grid
+set xlabel "Time"
+set format x "%d-%H:%M"
+set xtic rotate by -45 scale 0
+set ytics format "%1.3f ppm" nomirror
+set title "local clock skew"
+set key top right box
+set label 1 gprintf("99%% = $NINETYNINE ppm",99) at graph 0.01,0.95 left front
+set label 2 gprintf("95%% = $NINETYFIVE ppm",95) at graph 0.01,0.9 left front
+set label 3 gprintf(" 5%% = $FIVE ppm",5) at graph 0.01,0.85 left front
+set label 4 gprintf(" 1%% = $ONE ppm",1) at graph 0.01,0.8 left front
+set label 5 gprintf("95%% - 5%% = $NF_M_F ppm",90) at graph 0.01,0.75 left front
+set label 6 gprintf("99%% - 1%% = $NN_M_O ppm",98) at graph 0.01,0.7 left front
+plot \
+ "tracking.log" using 1:5 title "skew" with linespoints, \
+ $NINETYNINE title "99th percentile", \
+ $NINETYFIVE title "95th percentile", \
+ $FIVE title "5th percentile", \
+ $ONE title "1st percentile"
+EOF

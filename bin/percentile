@@ -1,0 +1,16 @@
+#!/usr/bin/perl
+
+use strict;
+
+my $column = shift;
+my $percentile = shift;
+
+my(@data);
+while(<>) {
+  my(@columns) = split(/ +/);
+  push(@data, $columns[$column]);
+}
+
+@data = sort {$a <=> $b} @data;
+my $offset = int(scalar(@data) * ($percentile/100));
+print $data[$offset],"\n";

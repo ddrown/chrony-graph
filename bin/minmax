@@ -1,0 +1,19 @@
+#!/usr/bin/perl
+
+use strict;
+
+my $column = shift;
+my $minmax = shift;
+
+my(@data);
+while(<>) {
+  my(@columns) = split(/ +/);
+  push(@data, $columns[$column]);
+}
+
+@data = sort {$a <=> $b} @data;
+my $offset = 0;
+if($minmax eq "max") {
+  $offset = -1;
+}
+print $data[$offset],"\n";

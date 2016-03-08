@@ -1,0 +1,44 @@
+#!/bin/sh
+
+NOW=`date +%s`
+# 604800 seconds = 7 days
+STARTIME=`expr $NOW - 604800`
+
+LOGDAYS=7
+LOGDIR=/var/log/chrony
+
+function limit_time {
+  awk '{if($1 > '$STARTIME') { print }}'
+}
+
+function cat_logfiles {
+  file_pattern="$1"
+
+  find $LOGDIR -name "$file_pattern" \! -name \*.gz -mtime -$LOGDAYS | xargs -r cat 
+# un-comment this next line if you compress your logs
+# find $LOGDIR -name "$file_pattern".gz -mtime -$LOGDAYS | xargs -r zcat 
+}
+
+rm -f statistics*
+echo statistics.log `date`
+# split the statistics logs based on the source IP
+cat_logfiles statistics.log\* | ../bin/timestamps | limit_time | sort -n | ../bin/split statistics
+
+rm -f measurements.*
+echo measurements.log `date`
+# measurements logs - also split based on source IP
+cat_logfiles measurements.log\* | ../bin/timestamps | limit_time | sort -n | ../bin/split measurements
+
+echo tracking.log `date`
+# local clock info goes in one logfile
+cat_logfiles tracking.log\* | ../bin/timestamps | limit_time | sort -n >tracking.log
+
+echo done `date`
+
+# optional GPS log processing
+#sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/gps-lock | ../bin/timestamps | limit_time >gps-lock
+#sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/snr-history | ../bin/timestamps | limit_time >snr-history
+
+../bin/index >index.html
+
+../bin/plot

@@ -1,0 +1,26 @@
+#!/usr/bin/perl
+
+use strict;
+
+my(%counts);
+while(<>) {
+  chomp($_);
+  s/^\d+ //;
+  my(@line) = split(/, /);
+  for(my $i = 0; $i < @line; $i++) {
+    if($line[$i] =~ /^(\d*):(\d+)$/) {
+      my($snr,$count) = ($1,$2);
+      if($snr ne "") {
+        $counts{$snr} += $count;
+      } else {
+        $counts{-1} += $count;
+      }
+    } else {
+      print STDERR "$0 unknown part: $_\n";
+    }
+  }
+}
+
+foreach my $count (sort { $a <=> $b } keys %counts) {
+  print $count," ",$counts{$count},"\n";
+}

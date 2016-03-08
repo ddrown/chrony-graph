@@ -1,0 +1,18 @@
+#!/usr/bin/perl
+
+use strict;
+
+my($column) = shift;
+my($step) = shift;
+
+my(@data);
+while(<>) {
+  my(@columns) = split(/ +/);
+  push(@data, $columns[$column]);
+}
+
+@data = sort {$a <=> $b} @data;
+for(my $pct = 0; $pct < 100; $pct += $step) {
+  my $offset = int(scalar(@data) * ($pct/100));
+  printf("%0.1f %s\n", $pct,$data[$offset]);
+}
