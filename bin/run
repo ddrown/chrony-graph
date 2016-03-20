@@ -1,8 +1,12 @@
 #!/bin/sh
 
-NOW=`date +%s`
-# 604800 seconds = 7 days
-STARTIME=`expr $NOW - 604800`
+if [ -x startime ]; then
+  STARTIME=`./startime`
+else
+  NOW=`date +%s`
+  # 604800 seconds = 7 days
+  STARTIME=`expr $NOW - 604800`
+fi
 
 LOGDAYS=7
 LOGDIR=/var/log/chrony
