@@ -150,4 +150,8 @@ EOF
 # "snr-history.hourly" using 1:(\$2 / (\$2 + \$3) * 100) title "signal" with lines
 #EOF
 
+if [ -x custom-plot ]; then
+  ./custom-plot
+fi
+
 ../bin/copy-to-website
