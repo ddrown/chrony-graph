@@ -20,3 +20,6 @@ To run (under screen/tmux):
 	cd run1 ; ../bin/loop
 	# edit run1/notes to keep notes
 
+Optional scripts:
+	run1/startime - echo the unix timestamp to start at
+	run1/custom-plot - generate some custom plots
