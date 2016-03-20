@@ -24,3 +24,4 @@ Optional scripts:
 
 	run1/startime - echo the unix timestamp to start at
 	run1/custom-plot - generate some custom plots
+	bin/copy-logfiles - download the logfiles from elsewhere, see copy-logfiles.example

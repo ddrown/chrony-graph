@@ -11,6 +11,13 @@ fi
 LOGDAYS=7
 LOGDIR=/var/log/chrony
 
+if [ -x ../bin/copy-logfiles ]; then
+  test -d log-chrony || mkdir log-chrony
+  test -d log || mkdir log
+  ../bin/copy-logfiles
+  LOGDIR=log-chrony
+fi
+
 function limit_time {
   awk '{if($1 > '$STARTIME') { print }}'
 }

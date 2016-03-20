@@ -1,0 +1,8 @@
+#!/bin/sh
+
+cd log-chrony || exit 1
+rsync -avP --delete remoteserver.example.com:/var/log/chrony/ .
+
+# comment out the next two lines if you're not using the ntp app to log gps signals
+cd ../log || exit 1
+rsync -avP remoteserver.example.com:/var/log/ntp-app/ .
