@@ -1,6 +1,12 @@
 #!/usr/bin/perl
 
 use strict;
+use Getopt::Long;
+
+my($cdf);
+GetOptions ("cdf" => \$cdf)
+or die("Error in command line arguments\n");
+
 
 my(%counts);
 while(<>) {
@@ -21,6 +27,14 @@ while(<>) {
   }
 }
 
-foreach my $count (sort { $a <=> $b } keys %counts) {
-  print $count," ",$counts{$count},"\n";
+if($cdf) {
+  my($sum) = 0;
+  foreach my $count (sort { $a <=> $b } keys %counts) {
+    $sum += $counts{$count};
+    print $count," $sum\n";
+  }
+} else {
+  foreach my $count (sort { $a <=> $b } keys %counts) {
+    print $count," ",$counts{$count},"\n";
+  }
 }
