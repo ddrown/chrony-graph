@@ -47,8 +47,19 @@ cat_logfiles tracking.log\* | ../bin/timestamps | limit_time | sort -n >tracking
 echo done `date`
 
 # optional GPS log processing
-#sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/gps-lock | ../bin/timestamps | limit_time >gps-lock
-#sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/snr-history | ../bin/timestamps | limit_time >snr-history
+if [ -f log/gps-lock ]; then
+  sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/gps-lock | ../bin/timestamps | limit_time >gps-lock
+fi
+if [ -f log/snr-history ]; then
+  sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/snr-history | ../bin/timestamps | limit_time >snr-history
+fi
+
+if [ -f log/gps-lock2 ]; then
+  sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/gps-lock2 | ../bin/timestamps | limit_time >gps-lock2
+fi
+if [ -f log/snr-history2 ]; then
+  sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/snr-history2 | ../bin/timestamps | limit_time >snr-history2
+fi
 
 ../bin/index >index.html
 
