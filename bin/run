@@ -27,18 +27,18 @@ function cat_logfiles {
 
   find $LOGDIR -name "$file_pattern" \! -name \*.gz -mtime -$LOGDAYS | xargs -r cat 
 # un-comment this next line if you compress your logs
-# find $LOGDIR -name "$file_pattern".gz -mtime -$LOGDAYS | xargs -r zcat 
+# find $LOGDIR -name "$file_pattern".gz -mtime -$LOGDAYS | xargs -r zcat
 }
 
 rm -f statistics*
 echo statistics.log `date`
 # split the statistics logs based on the source IP
-cat_logfiles statistics.log\* | ../bin/timestamps | limit_time | sort -n | ../bin/split statistics
+cat_logfiles statistics.log\* | ../bin/timestamps | limit_time | sort -n | ../bin/split statistics ../aliases
 
 rm -f measurements.*
 echo measurements.log `date`
 # measurements logs - also split based on source IP
-cat_logfiles measurements.log\* | ../bin/timestamps | limit_time | sort -n | ../bin/split measurements
+cat_logfiles measurements.log\* | ../bin/timestamps | limit_time | sort -n | ../bin/split measurements ../aliases
 
 echo tracking.log `date`
 # local clock info goes in one logfile

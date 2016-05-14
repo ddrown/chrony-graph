@@ -6,10 +6,25 @@ my $filename = shift;
 if(not defined $filename) {
   die("I need an output filename");
 }
+my $alias_file = shift;
+my(%aliases);
+if(-f $alias_file) {
+  open(ALIAS,"<",$alias_file);
+  while(<ALIAS>) {
+    if(/(\S+) (\S+)/) {
+      $aliases{$1} = $2;
+    }
+  }
+  close(ALIAS);
+}
 
 while(<>) {
   if(/^(\d+) (\S+)/) {
-    open(OUT,">>$filename.$2");
+    my($host) = $2;
+    if(defined($aliases{$host})) {
+      $host = $aliases{$host};
+    }
+    open(OUT,">>$filename.$host");
     print OUT $_;
     close(OUT);
   }
