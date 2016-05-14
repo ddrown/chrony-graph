@@ -29,9 +29,13 @@ while(<>) {
 
 if($cdf) {
   my($sum) = 0;
+  my(%bins);
   foreach my $count (sort { $a <=> $b } keys %counts) {
     $sum += $counts{$count};
-    print $count," $sum\n";
+    $bins{$count} = $sum;
+  }
+  foreach my $count (sort { $a <=> $b } keys %bins) {
+    print "$count ",($bins{$count}/$sum*100),"\n";
   }
 } else {
   foreach my $count (sort { $a <=> $b } keys %counts) {
