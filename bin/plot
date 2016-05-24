@@ -104,51 +104,53 @@ plot \
 EOF
 
 # optional GPS tracking
-#gnuplot <<EOF
-#set terminal png size 900,600
-#set xdata time
-#set timefmt "%s"
-#set output "gps-lock.png"
-#set grid
-#set xlabel "Time"
-#set format x "%d-%H:%M"
-#set xtic rotate by -45 scale 0
-#set ytics format "%1.0f seconds/hr with lock" nomirror
-#set title "Seconds per hour spent in GPS lock"
-#set key bottom right box
-#plot \
-# "gps-lock" using 1:2 title "second" with lines
-#EOF
-#
-#../bin/histogram-snr <snr-history >snr-history.history
-#gnuplot <<EOF
-#set terminal png size 900,600
-#set output "gps-snr-histogram.png"
-#set grid
-#set xtic rotate by -45 scale 0
-#set title "GPS SNR histogram"
-#set xtics format "%1.1fdB snr" nomirror
-#set key off
-#plot \
-# "snr-history.history" using 1:2 title "histogram" with boxes
-#EOF
-#
-#../bin/snr-hourly snr-history >snr-history.hourly
-#gnuplot <<EOF
-#set terminal png size 900,600
-#set xdata time
-#set timefmt "%s"
-#set output "gps-snr-hourly.png"
-#set grid
-#set xlabel "Time"
-#set format x "%d-%H:%M"
-#set xtic rotate by -45 scale 0
-#set ytics format "%1.0f %% of time" nomirror
-#set title "Percent of time satellites spent at 0 snr"
-#set key bottom right box
-#plot \
-# "snr-history.hourly" using 1:(\$2 / (\$2 + \$3) * 100) title "signal" with lines
-#EOF
+if [ -f gps-lock -a -f snr-history -a \! -f disable-default-gps-graphs ]; then
+  gnuplot <<EOF
+  set terminal png size 900,600
+  set xdata time
+  set timefmt "%s"
+  set output "gps-lock.png"
+  set grid
+  set xlabel "Time"
+  set format x "%d-%H:%M"
+  set xtic rotate by -45 scale 0
+  set ytics format "%1.0f seconds/hr with lock" nomirror
+  set title "Seconds per hour spent in GPS lock"
+  set key bottom right box
+  plot \
+   "gps-lock" using 1:2 title "second" with lines
+EOF
+
+  ../bin/snr-hourly snr-history >snr-history.hourly
+  gnuplot <<EOF
+  set terminal png size 900,600
+  set xdata time
+  set timefmt "%s"
+  set output "gps-snr-hourly.png"
+  set grid
+  set xlabel "Time"
+  set format x "%d-%H:%M"
+  set xtic rotate by -45 scale 0
+  set ytics format "%1.0f %% of time" nomirror
+  set title "Percent of time satellites spent at 0 snr"
+  set key bottom right box
+  plot \
+   "snr-history.hourly" using 1:(\$2 / (\$2 + \$3) * 100) title "signal" with lines
+EOF
+
+  ../bin/histogram-snr --cdf <snr-history >snr-history.cdf
+  gnuplot <<EOF
+  set terminal png size 900,600
+  set output "gps-snr-cdf.png"
+  set grid
+  set xtic rotate by -45 scale 0
+  set title "GPS SNR cdf"
+  set xtics format "%1.1fdB snr" nomirror
+  set key bottom right box
+  plot \
+   "snr-history.cdf" using 1:2 title "GPS" with lines
+EOF
+fi
 
 if [ -x custom-plot ]; then
   ./custom-plot
