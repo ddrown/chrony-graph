@@ -1,0 +1,13 @@
+#!/bin/sh
+
+NOW=`date +%s`
+# 604800 seconds = 7 days
+STARTIME=`expr $NOW - 604800`
+# minimum start time in unix format from: env TZ=GMT date -d "May 23 04:33" +%s
+MINTIME=1463977980
+
+if [ $STARTIME -lt $MINTIME ]; then
+  echo $MINTIME
+else
+  echo $STARTIME
+fi
