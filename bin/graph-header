@@ -17,7 +17,7 @@ set xtic rotate by -45 scale 0
 set ylabel ""
 set ytics format "$FORMAT" nomirror
 set title "$TITLE"
-set key top right box
+set key bottom right box
 $CUSTOM
 plot \\
 EOF

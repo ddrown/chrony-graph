@@ -9,13 +9,13 @@ else
 fi
 
 LOGDAYS=7
-LOGDIR=/var/log/chrony
+LOGDIR=/var/log/ntpstats
 
 if [ -x ../bin/copy-logfiles ]; then
-  test -d log-chrony || mkdir log-chrony
+  test -d log-ntp || mkdir log-ntp
   test -d log || mkdir log
   ../bin/copy-logfiles
-  LOGDIR=log-chrony
+  LOGDIR=log-ntp
 fi
 
 function limit_time {
@@ -27,38 +27,34 @@ function cat_logfiles {
 
   find $LOGDIR -name "$file_pattern" \! -name \*.gz -mtime -$LOGDAYS | xargs -r cat 
 # un-comment this next line if you compress your logs
-# find $LOGDIR -name "$file_pattern".gz -mtime -$LOGDAYS | xargs -r zcat
+  find $LOGDIR -name "$file_pattern".gz -mtime -$LOGDAYS | xargs -r zcat 
 }
 
-rm -f statistics*
-echo statistics.log `date`
+rm -f peerstats.*
+echo peerstats `date`
 # split the statistics logs based on the source IP
-cat_logfiles statistics.log\* | ../bin/timestamps | limit_time | sort -n | ../bin/split statistics ../aliases
+cat_logfiles peerstats.\* | ../bin/timestamps | limit_time | sort -n | ../bin/split peerstats ../aliases
 
-rm -f measurements.*
-echo measurements.log `date`
-# measurements logs - also split based on source IP
-cat_logfiles measurements.log\* | ../bin/timestamps | limit_time | sort -n | ../bin/split measurements ../aliases
-
-echo tracking.log `date`
+rm -f loopstats
+echo loopstats `date`
 # local clock info goes in one logfile
-cat_logfiles tracking.log\* | ../bin/timestamps | limit_time | sort -n >tracking.log
+cat_logfiles loopstats.\* | ../bin/timestamps | limit_time | sort -n >loopstats
 
 echo done `date`
 
 # optional GPS log processing
 if [ -f log/gps-lock ]; then
-  sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/gps-lock | ../bin/timestamps | limit_time >gps-lock
+  sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/gps-lock | ../bin/timestamps-chrony | limit_time >gps-lock
 fi
 if [ -f log/snr-history ]; then
-  sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/snr-history | ../bin/timestamps | limit_time >snr-history
+  sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/snr-history | ../bin/timestamps-chrony | limit_time >snr-history
 fi
 
 if [ -f log/gps-lock2 ]; then
-  sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/gps-lock2 | ../bin/timestamps | limit_time >gps-lock2
+  sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/gps-lock2 | ../bin/timestamps-chrony | limit_time >gps-lock2
 fi
 if [ -f log/snr-history2 ]; then
-  sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/snr-history2 | ../bin/timestamps | limit_time >snr-history2
+  sed 's/ \([0-9]\+:[0-9]\+\) / \1:00 /' <log/snr-history2 | ../bin/timestamps-chrony | limit_time >snr-history2
 fi
 
 ../bin/index >index.html

@@ -5,13 +5,12 @@ export GNUPLOT_DEFAULT_GDFONT=LiberationSans-Regular
 
 ../bin/local-clock-graph
 ../bin/offset-graph
-../bin/diff-freq-graph
 ../bin/skew-graph
 
-NINETYFIVE=`../bin/percentile 3 95 tracking.log`
-NINETYNINE=`../bin/percentile 3 99 tracking.log`
-FIVE=`../bin/percentile 3 5 tracking.log`
-ONE=`../bin/percentile 3 1 tracking.log`
+NINETYFIVE=`../bin/percentile 2 95 loopstats`
+NINETYNINE=`../bin/percentile 2 99 loopstats`
+FIVE=`../bin/percentile 2 5 loopstats`
+ONE=`../bin/percentile 2 1 loopstats`
 NF_M_F=`echo $NINETYFIVE - $FIVE | bc`
 NN_M_O=`echo $NINETYNINE - $ONE | bc`
 gnuplot <<EOF
@@ -33,17 +32,17 @@ set label 4 gprintf(" 1%% = $ONE ppm",1) at graph 0.01,0.15 left front
 set label 5 gprintf("95%% - 5%% = $NF_M_F ppm",90) at graph 0.01,0.1 left front
 set label 6 gprintf("99%% - 1%% = $NN_M_O ppm",98) at graph 0.01,0.05 left front
 plot \
- "tracking.log" using 1:4 title "local clock error" with linespoints, \
+ "loopstats" using 1:3 title "local clock error" with linespoints, \
  $NINETYNINE title "99th percentile", \
  $NINETYFIVE title "95th percentile", \
  $FIVE title "5th percentile", \
  $ONE title "1st percentile"
 EOF
 
-NINETYFIVE=`../bin/percentile 5 95 tracking.log | ../bin/mul 1000000`
-NINETYNINE=`../bin/percentile 5 99 tracking.log | ../bin/mul 1000000`
-FIVE=`../bin/percentile 5 5 tracking.log | ../bin/mul 1000000`
-ONE=`../bin/percentile 5 1 tracking.log | ../bin/mul 1000000`
+NINETYFIVE=`../bin/percentile 1 95 loopstats | ../bin/mul 1000000`
+NINETYNINE=`../bin/percentile 1 99 loopstats | ../bin/mul 1000000`
+FIVE=`../bin/percentile 1 5 loopstats | ../bin/mul 1000000`
+ONE=`../bin/percentile 1 1 loopstats | ../bin/mul 1000000`
 NF_M_F=`echo $NINETYFIVE - $FIVE | bc`
 NN_M_O=`echo $NINETYNINE - $ONE | bc`
 gnuplot <<EOF
@@ -65,7 +64,7 @@ set label 4 gprintf(" 1%% = %1.2f us",$ONE) at graph 0.01,0.15 left front
 set label 5 gprintf("95%% - 5%% = %1.2f us", $NF_M_F) at graph 0.01,0.1 left front
 set label 6 gprintf("99%% - 1%% = %1.2f us", $NN_M_O) at graph 0.01,0.05 left front
 plot \
- "tracking.log" using 1:(\$6 * 1000000) title "local clock offset" with linespoints, \
+ "loopstats" using 1:(\$2 * 1000000) title "local clock offset" with linespoints, \
  $NINETYNINE title "99th percentile", \
  $NINETYFIVE title "95th percentile", \
  $FIVE title "5th percentile", \
@@ -73,10 +72,11 @@ plot \
 EOF
 
 # for nanosecond level:
-#../bin/histogram 5 1000000000 <tracking.log >tracking.log.history
-../bin/histogram 5 1000000 <tracking.log >tracking.log.history
-SEVENTYFIVE=`../bin/percentile 5 75 tracking.log | ../bin/mul 1000000`
-TWENTYFIVE=`../bin/percentile 5 25 tracking.log | ../bin/mul 1000000`
+#../bin/histogram 1 1000000000 <loopstats >loopstats.history
+# microseconds:
+../bin/histogram 1 1000000 <loopstats >loopstats.history
+SEVENTYFIVE=`../bin/percentile 1 75 loopstats | ../bin/mul 1000000`
+TWENTYFIVE=`../bin/percentile 1 25 loopstats | ../bin/mul 1000000`
 
 gnuplot <<EOF
 set terminal png size 900,600
@@ -97,10 +97,10 @@ set arrow from $TWENTYFIVE,0 to $TWENTYFIVE,graph 0.7 as 3
 set label 4 gprintf("75%% = %1.2f us",$SEVENTYFIVE) at $SEVENTYFIVE, graph 0.7 left front offset 1,-1
 set style arrow 4 nohead
 set arrow from $SEVENTYFIVE,0 to $SEVENTYFIVE,graph 0.7 as 4
-set xrange [-500:500]
+set xrange [-700:700]
 set key off
 plot \
- "tracking.log.history" using 1:2 title "histogram" with boxes
+ "loopstats.history" using 1:2 title "histogram" with boxes
 EOF
 
 # optional GPS tracking

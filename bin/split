@@ -11,6 +11,7 @@ my(%aliases);
 if(-f $alias_file) {
   open(ALIAS,"<",$alias_file);
   while(<ALIAS>) {
+    s/#.*//;
     if(/(\S+) (\S+)/) {
       $aliases{$1} = $2;
     }
@@ -19,7 +20,7 @@ if(-f $alias_file) {
 }
 
 while(<>) {
-  if(/^(\d+) (\S+)/) {
+  if(/^([0-9.]+) (\S+)/) {
     my($host) = $2;
     if(defined($aliases{$host})) {
       $host = $aliases{$host};

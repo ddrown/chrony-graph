@@ -38,22 +38,13 @@ echo
 
 while read file title; do
   imagename=`echo $file | sed 's/:/_/g'`
-  measurements_file=`echo $file | sed 's/^statistics/measurements/'`
   (
-    if [ -f $measurements_file ]; then
-      FIFTY=`../bin/percentile 10 50 $measurements_file | ../bin/mul 1000000`
-      CUSTOM="set label 1 gprintf('50%% = $FIFTY us',50) at graph 0.01,0.05 left front"
-      ../bin/graph-header remote-${imagename}.png "%1.0f us" "offset of $title" "$CUSTOM"
-      echo "'$measurements_file' using 1:(\$11*1000000) title 'offset' with line, \\"
-      echo "'$measurements_file' using 1:((\$11+\$12/2)*1000000) title 'offset+rtt/2' with line, \\"
-      echo "'$measurements_file' using 1:((\$11-\$12/2)*1000000) title 'offset-rtt/2' with line, \\"
-      echo "$FIFTY title '50th percentile'"
-    else
-      FIFTY=`../bin/percentile 3 50 $file | ../bin/mul 1000000`
-      CUSTOM="set label 1 gprintf('50%% = $FIFTY us',50) at graph 0.01,0.05 left front"
-      ../bin/graph-header remote-${imagename}.png "%1.0f us" "offset of $title" "$CUSTOM"
-      echo "'$file' using 1:(\$4*1000000) title 'offset' with line, \\"
-      echo "$FIFTY title '50th percentile'"
-    fi
+    FIFTY=`../bin/percentile 3 50 $file | ../bin/mul 1000000`
+    CUSTOM="set label 1 gprintf('50%% = $FIFTY us',50) at graph 0.01,0.05 left front"
+    ../bin/graph-header remote-${imagename}.png "%1.0f us" "offset of $title" "$CUSTOM"
+    echo "'$file' using 1:(\$4*1000000) title 'offset' with line, \\"
+    echo "'$file' using 1:((\$4+\$5/2)*1000000) title 'offset+rtt/2' with line, \\"
+    echo "'$file' using 1:((\$4-\$5/2)*1000000) title 'offset-rtt/2' with line, \\"
+    echo "$FIFTY title '50th percentile'"
   ) | gnuplot
 done < ../titles

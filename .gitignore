@@ -2,3 +2,4 @@ bin/copy-to-website
 bin/copy-logfiles
 titles
 run[0-9]*
+aliases
