@@ -7,18 +7,11 @@ if [ -z "$TEMPLATE" ]; then
 fi
 
 i=0
-for stat in peerstats.*; do
-  date=`tail -1 $stat | cut -d" " -f1`
-  echo $date $stat
-done | sort -n | while read date file; do
-  title=`grep "^$file " ../titles | cut -d" " -f2`
-  if [ -z "$title" ]; then
-    title=${file#peerstats.}
-  fi
+while read file title; do
   if [ $i != 0 ]; then
     echo -n ,
   else
     i=1
   fi
   echo $TEMPLATE | sed -e "s/__FILE__/$file/g" -e "s/__TITLE__/$title/g"
-done
+done <../titles
