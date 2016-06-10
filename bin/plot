@@ -32,6 +32,8 @@ set label 3 gprintf(" 5%% = $FIVE ppm",5) at graph 0.01,0.2 left front
 set label 4 gprintf(" 1%% = $ONE ppm",1) at graph 0.01,0.15 left front
 set label 5 gprintf("95%% - 5%% = $NF_M_F ppm",90) at graph 0.01,0.1 left front
 set label 6 gprintf("99%% - 1%% = $NN_M_O ppm",98) at graph 0.01,0.05 left front
+set lmargin 12
+set rmargin 12
 plot \
  "tracking.log" using 1:4 title "local clock error" with linespoints, \
  $NINETYNINE title "99th percentile", \
@@ -64,6 +66,8 @@ set label 3 gprintf(" 5%% = %1.2f us",$FIVE) at graph 0.01,0.2 left front
 set label 4 gprintf(" 1%% = %1.2f us",$ONE) at graph 0.01,0.15 left front
 set label 5 gprintf("95%% - 5%% = %1.2f us", $NF_M_F) at graph 0.01,0.1 left front
 set label 6 gprintf("99%% - 1%% = %1.2f us", $NN_M_O) at graph 0.01,0.05 left front
+set lmargin 12
+set rmargin 12
 plot \
  "tracking.log" using 1:(\$6 * 1000000) title "local clock offset" with linespoints, \
  $NINETYNINE title "99th percentile", \
@@ -99,6 +103,8 @@ set style arrow 4 nohead
 set arrow from $SEVENTYFIVE,0 to $SEVENTYFIVE,graph 0.7 as 4
 set xrange [-500:500]
 set key off
+set lmargin 12
+set rmargin 12
 plot \
  "tracking.log.history" using 1:2 title "histogram" with boxes
 EOF
