@@ -2,7 +2,7 @@ Packages needed:
 
 	perl-DateTime
 	liberation-sans-fonts
-	gnuplot
+	gnuplot (needs Cairo/Pango support for best graphs)
 	bc
 
 To setup:
