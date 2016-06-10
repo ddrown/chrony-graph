@@ -19,5 +19,7 @@ set ytics format "$FORMAT" nomirror
 set title "$TITLE"
 set key bottom right box
 $CUSTOM
+set lmargin 12
+set rmargin 12
 plot \\
 EOF
