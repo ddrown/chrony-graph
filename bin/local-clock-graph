@@ -13,6 +13,8 @@ set ytics format "%1.2f us" nomirror
 set y2tics format "%2.3f ppm" nomirror
 set title "local clock"
 set key bottom right box
+set lmargin 12
+set rmargin 12
 plot \
  "tracking.log" using 1:(\$6*1000000) title "offset" with linespoints, \
  "tracking.log" using 1:4 title "local clock error" with linespoints axis x1y2
@@ -42,6 +44,8 @@ set label 3 gprintf(" 5%% = $FIVE us",5) at graph 0.01,0.85 left front
 set label 4 gprintf(" 1%% = $ONE us",1) at graph 0.01,0.8 left front
 set label 5 gprintf("95%% - 5%% = $NF_M_F us",90) at graph 0.01,0.75 left front
 set label 6 gprintf("99%% - 1%% = $NN_M_O us",98) at graph 0.01,0.7 left front
+set lmargin 12
+set rmargin 12
 plot \
  "tracking.log" using 1:(\$9*1000000) title "stddev" with linespoints, \
  $NINETYNINE title "99th percentile", \
@@ -74,6 +78,8 @@ set label 3 gprintf(" 5%% = $FIVE ppm",5) at graph 0.01,0.85 left front
 set label 4 gprintf(" 1%% = $ONE ppm",1) at graph 0.01,0.8 left front
 set label 5 gprintf("95%% - 5%% = $NF_M_F ppm",90) at graph 0.01,0.75 left front
 set label 6 gprintf("99%% - 1%% = $NN_M_O ppm",98) at graph 0.01,0.7 left front
+set lmargin 12
+set rmargin 12
 plot \
  "tracking.log" using 1:5 title "skew" with linespoints, \
  $NINETYNINE title "99th percentile", \
