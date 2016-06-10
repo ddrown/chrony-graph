@@ -1,3 +1,5 @@
+This is for graphing logs from chrony.  See the branch "ntpd" for ntpd/ntpsec graphs
+
 Packages needed:
 
 	perl-DateTime
