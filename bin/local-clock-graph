@@ -9,8 +9,8 @@ set grid
 set xlabel "Time"
 set format x "%d-%H:%M"
 set xtic rotate by -45 scale 0
-set ytics format "%1.2f us" nomirror
-set y2tics format "%2.3f ppm" nomirror
+set ytics format "%1.2f us" nomirror textcolor rgb '#0060ad'
+set y2tics format "%2.3f ppm" nomirror textcolor rgb '#dd181f'
 set title "Local Clock Offsets"
 set key bottom right box
 set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 ps 0   # --- blue
@@ -38,7 +38,7 @@ set xlabel "Time"
 set format x "%d-%H:%M"
 set xtic rotate by -45 scale 0
 set ytics format "%1.2f us" nomirror
-set title "local clock estimated time error - RMS Jitter"
+set title "RMS Time Jitter"
 set key top right box
 set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 ps 0   # --- blue
 set style line 2 lc rgb '#dd181f' lt 1 lw 1 pt 5 ps 0   # --- red
@@ -51,7 +51,7 @@ set label 6 gprintf("99%% - 1%% = $NN_M_O us",98) at graph 0.01,0.7 left front
 set lmargin 12
 set rmargin 12
 plot \
- "loopstats" using 1:(\$4*1000000) title "est error" with linespoints ls 1, \
+ "loopstats" using 1:(\$4*1000000) title "Jitter" with linespoints ls 1, \
  $NINETYNINE title "99th percentile", \
  $NINETYFIVE title "95th percentile", \
  $FIVE title "5th percentile", \
@@ -74,7 +74,7 @@ set xlabel "Time"
 set format x "%d-%H:%M"
 set xtic rotate by -45 scale 0
 set ytics format "%1.3f ppm" nomirror
-set title "RMS Frequency jitter - ADEV aka wander"
+set title "RMS Frequency Jitter - ADEV aka wander"
 set key top right box
 set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 ps 0   # --- blue
 set style line 2 lc rgb '#dd181f' lt 1 lw 1 pt 5 ps 0   # --- red
