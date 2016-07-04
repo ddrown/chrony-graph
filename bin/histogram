@@ -16,6 +16,13 @@ while(<>) {
   $counts{$data}++;
 }
 
+my($last_count);
 foreach my $count (sort { $a <=> $b } keys %counts) {
+  if(defined($last_count) and $last_count != $count-1) {
+    for(my $i = $last_count+1; $i < $count; $i++) {
+      print "$i 0\n";
+    }
+  }
+  $last_count = $count;
   print $count," ",$counts{$count},"\n";
 }
