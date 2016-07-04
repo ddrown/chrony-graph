@@ -11,13 +11,15 @@ set format x "%d-%H:%M"
 set xtic rotate by -45 scale 0
 set ytics format "%1.2f us" nomirror
 set y2tics format "%2.3f ppm" nomirror
-set title "local clock"
+set title "Local Clock Offsets"
 set key bottom right box
+set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 ps 0   # --- blue
+set style line 2 lc rgb '#dd181f' lt 1 lw 1 pt 5 ps 0   # --- red
 set lmargin 12
 set rmargin 12
 plot \
- "loopstats" using 1:(\$2*1000000) title "offset" with linespoints, \
- "loopstats" using 1:3 title "local clock error" with linespoints axis x1y2
+ "loopstats" using 1:(\$2*1000000) title "clock offset us" with linespoints ls 1, \
+ "loopstats" using 1:3 title "frequency offset ppm" with linespoints ls 2 axis x1y2
 EOF
 
 NINETYFIVE=`../bin/percentile 3 95 loopstats | ../bin/mul 1000000`
@@ -36,8 +38,10 @@ set xlabel "Time"
 set format x "%d-%H:%M"
 set xtic rotate by -45 scale 0
 set ytics format "%1.2f us" nomirror
-set title "local clock estimated error"
+set title "local clock estimated time error - RMS Jitter"
 set key top right box
+set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 ps 0   # --- blue
+set style line 2 lc rgb '#dd181f' lt 1 lw 1 pt 5 ps 0   # --- red
 set label 1 gprintf("99%% = $NINETYNINE us",99) at graph 0.01,0.95 left front
 set label 2 gprintf("95%% = $NINETYFIVE us",95) at graph 0.01,0.9 left front
 set label 3 gprintf(" 5%% = $FIVE us",5) at graph 0.01,0.85 left front
@@ -47,7 +51,7 @@ set label 6 gprintf("99%% - 1%% = $NN_M_O us",98) at graph 0.01,0.7 left front
 set lmargin 12
 set rmargin 12
 plot \
- "loopstats" using 1:(\$4*1000000) title "est error" with linespoints, \
+ "loopstats" using 1:(\$4*1000000) title "est error" with linespoints ls 1, \
  $NINETYNINE title "99th percentile", \
  $NINETYFIVE title "95th percentile", \
  $FIVE title "5th percentile", \
@@ -70,8 +74,10 @@ set xlabel "Time"
 set format x "%d-%H:%M"
 set xtic rotate by -45 scale 0
 set ytics format "%1.3f ppm" nomirror
-set title "local clock stability"
+set title "RMS Frequency jitter - ADEV aka wander"
 set key top right box
+set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 ps 0   # --- blue
+set style line 2 lc rgb '#dd181f' lt 1 lw 1 pt 5 ps 0   # --- red
 set label 1 gprintf("99%% = $NINETYNINE ppm",99) at graph 0.01,0.95 left front
 set label 2 gprintf("95%% = $NINETYFIVE ppm",95) at graph 0.01,0.9 left front
 set label 3 gprintf(" 5%% = $FIVE ppm",5) at graph 0.01,0.85 left front
@@ -81,7 +87,7 @@ set label 6 gprintf("99%% - 1%% = $NN_M_O ppm",98) at graph 0.01,0.7 left front
 set lmargin 12
 set rmargin 12
 plot \
- "loopstats" using 1:5 title "stability" with linespoints, \
+ "loopstats" using 1:5 title "stability" with linespoints ls 2, \
  $NINETYNINE title "99th percentile", \
  $NINETYFIVE title "95th percentile", \
  $FIVE title "5th percentile", \

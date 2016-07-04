@@ -1,6 +1,12 @@
 #!/bin/sh
 
-export GDFONTPATH=/usr/share/fonts/liberation
+if [ -d /usr/share/fonts/liberation ]; then
+  export GDFONTPATH=/usr/share/fonts/liberation
+elif [ -d /usr/share/fonts/truetype/liberation ]; then
+  export GDFONTPATH=/usr/share/fonts/truetype/liberation
+else
+  echo warning: liberation truetype fonts not found
+fi
 export GNUPLOT_DEFAULT_GDFONT=LiberationSans-Regular
 
 ../bin/local-clock-graph
@@ -23,8 +29,10 @@ set xlabel "Time"
 set format x "%d-%H:%M"
 set xtic rotate by -45 scale 0
 set ytics format "%1.3f ppm" nomirror
-set title "Local Clock range"
+set title "Local Clock Frequency Offset"
 set key bottom right box
+set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 ps 0   # --- blue
+set style line 2 lc rgb '#dd181f' lt 1 lw 1 pt 5 ps 0   # --- red
 set label 1 gprintf("99%% = $NINETYNINE ppm",99) at graph 0.01,0.3 left front
 set label 2 gprintf("95%% = $NINETYFIVE ppm",95) at graph 0.01,0.25 left front
 set label 3 gprintf(" 5%% = $FIVE ppm",5) at graph 0.01,0.2 left front
@@ -34,7 +42,7 @@ set label 6 gprintf("99%% - 1%% = $NN_M_O ppm",98) at graph 0.01,0.05 left front
 set lmargin 12
 set rmargin 12
 plot \
- "loopstats" using 1:3 title "local clock error" with linespoints, \
+ "loopstats" using 1:3 title "local clock error" with linespoints ls 2, \
  $NINETYNINE title "99th percentile", \
  $NINETYFIVE title "95th percentile", \
  $FIVE title "5th percentile", \
@@ -57,8 +65,10 @@ set xlabel "Time"
 set format x "%d-%H:%M"
 set xtic rotate by -45 scale 0
 set ytics format "%1.2f us" nomirror
-set title "Local Clock Offsets over time"
+set title "Local Clock Time Offset"
 set key bottom right box
+set style line 1 lc rgb '#0060ad' lt 1 lw 1 pt 7 ps 0   # --- blue
+set style line 2 lc rgb '#dd181f' lt 1 lw 1 pt 5 ps 0   # --- red
 set label 1 gprintf("99%% = %1.2f us",$NINETYNINE) at graph 0.01,0.3 left front
 set label 2 gprintf("95%% = %1.2f us",$NINETYFIVE) at graph 0.01,0.25 left front
 set label 3 gprintf(" 5%% = %1.2f us",$FIVE) at graph 0.01,0.2 left front
@@ -68,7 +78,7 @@ set label 6 gprintf("99%% - 1%% = %1.2f us", $NN_M_O) at graph 0.01,0.05 left fr
 set lmargin 12
 set rmargin 12
 plot \
- "loopstats" using 1:(\$2 * 1000000) title "local clock offset" with linespoints, \
+ "loopstats" using 1:(\$2 * 1000000) title "local clock offset" with linespoints ls 1, \
  $NINETYNINE title "99th percentile", \
  $NINETYFIVE title "95th percentile", \
  $FIVE title "5th percentile", \
