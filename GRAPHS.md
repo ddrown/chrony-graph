@@ -71,11 +71,11 @@
  - Shows the % of time the GPS module was in 2D or 3D lock.  Useful to see if your GPS has a good signal
 
 - Graph Title: "Percent of time satellites spent at 0 snr"
- - filename: gps-snr-hourly.png (optional)
+ - filename: gps-snr-hourly.png
  - optional, depends on the ntp-www logfiles
  - shows the % of time the GPS satellites were at 0 SNR (no signal received).  Useful to see if your GPS has a good signal
 
 - Graph Title: "GPS SNR cdf"
- - filename: gps-snr-cdf.png (optional)
+ - filename: gps-snr-cdf.png
  - optional, depends on the ntp-www logfiles
  - shows a distribution of SNR values.  Useful to compare GPS antennas.  The line shows how often the satellites were at a given SNR or lower.
