@@ -1,5 +1,6 @@
 # Definitions
 
+- CDF = cumulative distribution function.  Another way of looking at a histogram, it shows how likely a given value is
 - clock offset = the difference between the actual time and the local clock's time. (Also can be called phase offset)
 - frequency offset = the difference between the local clock's actual frequency and its expected frequency (usually in parts per million, ppm)
 - jitter = the short term change in a value
@@ -7,11 +8,10 @@
 - ppm, parts per million = Ratio between two values. These following are all the same: 1 ppm, one in one million, 1/1000000, 0.000001, and 0.0001%
 - refclock = reference clock, from a GPS module or other source of time
 - remote clock = clock reached over the network, LAN or WAN
+- SNR = signal to noise ratio.  Higher values indicate a strong signal. values over 20dB are good
 - upstream clock = any remote clock or reference clock used as a source of time
 - us, µs, microsecond = one millionth of a second, and one thousandth of a millisecond
 - wander = the long term change in a value
-- SNR = signal to noise ratio.  Higher values indicate a strong signal. values over 20dB are good
-- CDF = cumulative distribution function.  Another way of looking at a histogram, it shows how likely a given value is
 
 # NTP Graphs generated and what they mean
 
