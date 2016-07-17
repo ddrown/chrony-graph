@@ -130,11 +130,11 @@ if [ -f gps-lock -a -f snr-history -a \! -f disable-default-gps-graphs ]; then
   set xlabel "Time"
   set format x "%d-%H:%M"
   set xtic rotate by -45 scale 0
-  set ytics format "%1.0f seconds/hr with lock" nomirror
-  set title "Seconds per hour spent in GPS lock"
+  set ytics format "%1.0f %%" nomirror
+  set title "% of time spent in GPS lock"
   set key bottom right box
   plot \
-   "gps-lock" using 1:2 title "second" with lines
+   "gps-lock" using 1:(\$2/(\$2+\$3)*100) title "lock" with lines
 EOF
 
   ../bin/snr-hourly snr-history >snr-history.hourly
@@ -162,6 +162,7 @@ EOF
   set xtic rotate by -45 scale 0
   set title "GPS SNR cdf"
   set xtics format "%1.1fdB snr" nomirror
+  set ytics format "%1.0f %%" nomirror
   set key bottom right box
   plot \
    "snr-history.cdf" using 1:2 title "GPS" with lines
