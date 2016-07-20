@@ -2,11 +2,12 @@
 
 use strict;
 
+my $allowed_timestamp_max = time()+300; # if it's in the future, it's probably invalid data
 while(<>) {
   if(/^([0-9]+) ([0-9.]+) (.*)/) {
     my($mjd,$second,$text) = ($1,$2,$3);
     my $epoch = 24*60*60*$mjd+$second-3506716800; # warning: 32 bit overflows
-    if($epoch > time()+300) { # nothing in the future
+    if($epoch > $allowed_timestamp_max) {
       $epoch = 0;
     }
     print "$epoch $text\n";
