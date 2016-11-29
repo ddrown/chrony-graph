@@ -20,9 +20,9 @@ my($last_count);
 foreach my $count (sort { $a <=> $b } keys %counts) {
   if(defined($last_count) and $last_count+1 != $count) {
     print(($last_count+1)." 0\n");
-  }
-  if(defined($last_count) and $last_count+2 != $count) {
-    print(($count-1)." 0\n");
+    if(defined($last_count) and $last_count+2 != $count) {
+      print(($count-1)." 0\n");
+    }
   }
   $last_count = $count;
   print $count," ",$counts{$count},"\n";
