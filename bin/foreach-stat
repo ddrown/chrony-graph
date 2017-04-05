@@ -11,7 +11,7 @@ for stat in statistics.*; do
   date=`tail -1 $stat | cut -d" " -f1`
   echo $date $stat
 done | grep -v NMEA | sort -n | while read date file; do
-  title=`grep "^$file " ../titles | cut -d" " -f2`
+  title=`grep "^$file " ../titles 2> /dev/null | cut -d" " -f2`
   if [ -z "$title" ]; then
     title=${file#statistics.}
   fi
