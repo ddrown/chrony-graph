@@ -6,23 +6,33 @@
 echo 
 ) | gnuplot
 
+if [ -f ../titles ]; then
+  titles=$(cat ../titles)
+else
+  titles=$(
+    for stat in statistics.*; do
+      echo $stat ${stat#statistics.}
+    done
+  )
+fi
+
 #(
 #  ../bin/graph-header remote-strat1.png "%1.0f us" "offset of remote strat1s" ""
 #  i=0
-#  while read file title; do
+#  echo "$titles" | while read file title; do
 #    if [ $i != 0 ]; then
 #      echo -n ,
 #    else
 #      i=1
 #    fi
 #    echo "'$file' using 1:(\$4*1000000) title '$title' with line \\"
-#  done < ../titles
+#  done
 #) | gnuplot
 #
 #(
 #  ../bin/graph-header remote-strat1-downstream.png "%1.0f us" "offset-rtt/2 of remote strat1s" ""
 #  i=0
-#  while read file title; do
+#  echo "$titles" | while read file title; do
 #    measurements_file=`echo $file | sed 's/^statistics/measurements/'`
 #    if [ -f $measurements_file ]; then
 #      if [ $i != 0 ]; then
@@ -32,11 +42,11 @@ echo
 #      fi
 #      echo "'$measurements_file' using 1:((\$11-\$12/2)*1000000) title '$title' with line \\"
 #    fi
-#  done < ../titles
+#  done
 #  echo
 #) | gnuplot
 
-while read file title; do
+echo "$titles" | while read file title; do
   imagename=`echo $file | sed 's/:/_/g'`
   measurements_file=`echo $file | sed 's/^statistics/measurements/'`
   (
@@ -56,4 +66,4 @@ while read file title; do
       echo "$FIFTY title '50th percentile'"
     fi
   ) | gnuplot
-done < ../titles
+done

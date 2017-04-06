@@ -9,7 +9,11 @@ else
 fi
 
 LOGDAYS=7
-LOGDIR=/var/log/chrony
+if [ -n "$CHRONY_LOGDIR" ]; then
+  LOGDIR=$CHRONY_LOGDIR
+else
+  LOGDIR=/var/log/chrony
+fi
 
 if [ -x ../bin/copy-logfiles ]; then
   test -d log-chrony || mkdir log-chrony
