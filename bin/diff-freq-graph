@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 (
 ../bin/graph-header all-diff-freq.png "%1.1f us/s" "all clocks (diff freq)" "set yrange [-3:3]"
