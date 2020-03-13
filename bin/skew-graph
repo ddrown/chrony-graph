@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 (
 ../bin/graph-header all-skew.png "%1.0f us/s" "all clocks (skew)" "set yrange [-10:10]"

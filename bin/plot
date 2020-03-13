@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 export GDFONTPATH=/usr/share/fonts/liberation
 export GNUPLOT_DEFAULT_GDFONT=LiberationSans-Regular

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 (
 ../bin/graph-header all-offset.png "%1.0f us" "all clocks (offset)" ""
