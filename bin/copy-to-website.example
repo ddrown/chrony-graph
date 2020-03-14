@@ -1,3 +1,3 @@
-#!/bin/sh
+#!/bin/bash
 
 rsync --delete -avP *.png *.html ~/my.www.dir/html/graphs/

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 cd log-chrony || exit 1
 rsync -avP --delete remoteserver.example.com:/var/log/chrony/ .
