@@ -1,0 +1,34 @@
+#!/usr/bin/perl
+
+use strict;
+
+my $prevlimit = shift;
+my $column = shift;
+
+my(@data);
+while(<>) {
+  my(@columns) = split(/ +/);
+  push(@data, abs($columns[$column]));
+}
+
+my $percentile = 50;
+
+@data = sort {$a <=> $b} @data;
+my $offset = int(scalar(@data) * ($percentile/100));
+my $limit = $data[$offset];
+if ($limit == 0) { $limit = 1; printf STDERR "FORCE LIMIT 1 (avoid log(0))\n"; }
+# This takes us to the next power of 10:
+my $linscalelimit = 10**int(log($limit)/log(10)+1);
+# But scale down to 5 or 2
+if ($linscalelimit / 2 > $limit) {
+    $linscalelimit /= 2;
+}
+if ($linscalelimit / 2.5 > $limit) {
+    $linscalelimit /= 2.5;
+}
+
+if ($linscalelimit > $prevlimit) {
+    $linscalelimit = $prevlimit;
+}
+
+print $linscalelimit,"\n";
