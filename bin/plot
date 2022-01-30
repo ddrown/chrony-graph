@@ -15,10 +15,10 @@ ONE=`../bin/percentile 3 1 tracking.log`
 NF_M_F=`echo $NINETYFIVE - $FIVE | bc`
 NN_M_O=`echo $NINETYNINE - $ONE | bc`
 gnuplot <<EOF
-set terminal png size 900,600
+set terminal svg size 900,600
 set xdata time
 set timefmt "%s"
-set output "percentiles.png"
+set output "percentiles.svg"
 set grid
 set xlabel "Time"
 set format x "%d-%H:%M"
@@ -49,10 +49,10 @@ ONE=`../bin/percentile 5 1 tracking.log | ../bin/mul 1000000`
 NF_M_F=`echo $NINETYFIVE - $FIVE | bc`
 NN_M_O=`echo $NINETYNINE - $ONE | bc`
 gnuplot <<EOF
-set terminal png size 900,600
+set terminal svg size 900,600
 set xdata time
 set timefmt "%s"
-set output "percentiles-offset.png"
+set output "percentiles-offset.svg"
 set grid
 set xlabel "Time"
 set format x "%d-%H:%M"
@@ -83,8 +83,8 @@ SEVENTYFIVE=`../bin/percentile 5 75 tracking.log | ../bin/mul 1000000`
 TWENTYFIVE=`../bin/percentile 5 25 tracking.log | ../bin/mul 1000000`
 
 gnuplot <<EOF
-set terminal png size 900,600
-set output "offset-histogram.png"
+set terminal svg size 900,600
+set output "offset-histogram.svg"
 set grid
 set xtic rotate by -45 scale 0
 set title "Local Clock Offsets - Histogram"
@@ -111,10 +111,10 @@ EOF
 
 # optional GPS tracking
 #gnuplot <<EOF
-#set terminal png size 900,600
+#set terminal svg size 900,600
 #set xdata time
 #set timefmt "%s"
-#set output "gps-lock.png"
+#set output "gps-lock.svg"
 #set grid
 #set xlabel "Time"
 #set format x "%d-%H:%M"
@@ -128,8 +128,8 @@ EOF
 #
 #../bin/histogram-snr <snr-history >snr-history.history
 #gnuplot <<EOF
-#set terminal png size 900,600
-#set output "gps-snr-histogram.png"
+#set terminal svg size 900,600
+#set output "gps-snr-histogram.svg"
 #set grid
 #set xtic rotate by -45 scale 0
 #set title "GPS SNR histogram"
@@ -141,10 +141,10 @@ EOF
 #
 #../bin/snr-hourly snr-history >snr-history.hourly
 #gnuplot <<EOF
-#set terminal png size 900,600
+#set terminal svg size 900,600
 #set xdata time
 #set timefmt "%s"
-#set output "gps-snr-hourly.png"
+#set output "gps-snr-hourly.svg"
 #set grid
 #set xlabel "Time"
 #set format x "%d-%H:%M"
