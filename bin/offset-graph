@@ -1,7 +1,7 @@
 #!/bin/sh
 
 (
-../bin/graph-header all-offset.png "%1.0f us" "all clocks (offset)" ""
+../bin/graph-header all-offset.svg "%1.0f us" "all clocks (offset)" ""
 ../bin/foreach-stat "'__FILE__' using 1:(\$4*1000000) title '__TITLE__' with line \\"
 echo 
 ) | gnuplot
@@ -17,7 +17,7 @@ else
 fi
 
 #(
-#  ../bin/graph-header remote-strat1.png "%1.0f us" "offset of remote strat1s" ""
+#  ../bin/graph-header remote-strat1.svg "%1.0f us" "offset of remote strat1s" ""
 #  i=0
 #  echo "$titles" | while read file title; do
 #    if [ $i != 0 ]; then
@@ -30,7 +30,7 @@ fi
 #) | gnuplot
 #
 #(
-#  ../bin/graph-header remote-strat1-downstream.png "%1.0f us" "offset-rtt/2 of remote strat1s" ""
+#  ../bin/graph-header remote-strat1-downstream.svg "%1.0f us" "offset-rtt/2 of remote strat1s" ""
 #  i=0
 #  echo "$titles" | while read file title; do
 #    measurements_file=`echo $file | sed 's/^statistics/measurements/'`
@@ -53,7 +53,7 @@ echo "$titles" | while read file title; do
     if [ -f $measurements_file ]; then
       FIFTY=`../bin/percentile 10 50 $measurements_file | ../bin/mul 1000000`
       CUSTOM="set label 1 gprintf('50%% = $FIFTY us',50) at graph 0.01,0.05 left front"
-      ../bin/graph-header remote-${imagename}.png "%1.0f us" "offset of $title" "$CUSTOM"
+      ../bin/graph-header remote-${imagename}.svg "%1.0f us" "offset of $title" "$CUSTOM"
       echo "'$measurements_file' using 1:(\$11*1000000) title 'offset' with line, \\"
       echo "'$measurements_file' using 1:((\$11+\$12/2)*1000000) title 'offset+rtt/2' with line, \\"
       echo "'$measurements_file' using 1:((\$11-\$12/2)*1000000) title 'offset-rtt/2' with line, \\"
@@ -61,7 +61,7 @@ echo "$titles" | while read file title; do
     else
       FIFTY=`../bin/percentile 3 50 $file | ../bin/mul 1000000`
       CUSTOM="set label 1 gprintf('50%% = $FIFTY us',50) at graph 0.01,0.05 left front"
-      ../bin/graph-header remote-${imagename}.png "%1.0f us" "offset of $title" "$CUSTOM"
+      ../bin/graph-header remote-${imagename}.svg "%1.0f us" "offset of $title" "$CUSTOM"
       echo "'$file' using 1:(\$4*1000000) title 'offset' with line, \\"
       echo "$FIFTY title '50th percentile'"
     fi
