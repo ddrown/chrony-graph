@@ -1,9 +1,15 @@
 #!/bin/bash
 
 FILENAME=$1
-FORMAT=$2
-TITLE=$3
-CUSTOM=$4
+LINSCALELIMIT=$2
+FORMAT=$3
+TITLE=$4
+CUSTOM=$5
+
+YTICS=`../bin/linlogytics $LINSCALELIMIT`
+
+#echo $LINSCALELIMIT 1>&2
+#echo $YTICS 1>&2
 
 cat <<EOF
 set terminal png size 900,600
@@ -15,9 +21,14 @@ set xlabel "Time"
 set format x "%d-%H:%M"
 set xtic rotate by -45 scale 0
 set ylabel ""
-set ytics format "$FORMAT" nomirror
+set ytics format "$FORMAT" nomirror ($YTICS)
 set title "$TITLE"
 set key top right box
+flogy(y) = ((log(abs(y))-log($LINSCALELIMIT))/log(10)+2)*$LINSCALELIMIT*0.5
+glogy(y) = exp((log(10)*(abs(y)/($LINSCALELIMIT)-1)/0.5)+log($LINSCALELIMIT))
+f(y) = (abs(y) < $LINSCALELIMIT) ? y : sgn(y)*flogy(y)
+g(y) = (abs(y) < $LINSCALELIMIT) ? y : sgn(y)*glogy(y)
+set nonlinear y via f(y) inverse g(y)
 $CUSTOM
 set lmargin 12
 set rmargin 12

@@ -1,7 +1,16 @@
 #!/bin/bash
 
+LINSCALELIMIT=1
+for stat in statistics.*; do
+    LINSCALELIMIT=`../bin/linscalelimit $LINSCALELIMIT 5 $stat`
+    echo $stat $LINSCALELIMIT
+done
+LINSCALELIMIT=`echo $LINSCALELIMIT | ../bin/mul 1000000`
+
+# echo $LINSCALELIMIT
+
 (
-../bin/graph-header all-diff-freq.png "%1.1f us/s" "all clocks (diff freq)" "set yrange [-3:3]"
+../bin/graph-header all-diff-freq.png $LINSCALELIMIT "%1.1f us/s" "all clocks (diff freq)" "set yrange [-3:3]"
 ../bin/foreach-stat "'__FILE__' using 1:(\$6*1000000) title '__TITLE__' with line \\"
 echo 
 ) | gnuplot

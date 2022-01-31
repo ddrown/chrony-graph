@@ -48,6 +48,8 @@ FIVE=`../bin/percentile 5 5 tracking.log | ../bin/mul 1000000`
 ONE=`../bin/percentile 5 1 tracking.log | ../bin/mul 1000000`
 NF_M_F=`echo $NINETYFIVE - $FIVE | bc`
 NN_M_O=`echo $NINETYNINE - $ONE | bc`
+LINSCALELIMIT=`../bin/linscalelimit 1 5 tracking.log | ../bin/mul 1000000`
+YTICS=`../bin/linlogytics $LINSCALELIMIT`
 gnuplot <<EOF
 set terminal png size 900,600
 set xdata time
@@ -56,8 +58,13 @@ set output "percentiles-offset.png"
 set grid
 set xlabel "Time"
 set format x "%d-%H:%M"
+flogy(y) = ((log(abs(y))-log($LINSCALELIMIT))/log(10)+2)*$LINSCALELIMIT*0.5
+glogy(y) = exp((log(10)*(abs(y)/($LINSCALELIMIT)-1)/0.5)+log($LINSCALELIMIT))
+f(y) = (abs(y) < $LINSCALELIMIT) ? y : sgn(y)*flogy(y)
+g(y) = (abs(y) < $LINSCALELIMIT) ? y : sgn(y)*glogy(y)
+set nonlinear y via f(y) inverse g(y)
 set xtic rotate by -45 scale 0
-set ytics format "%1.2f us" nomirror
+set ytics format "%1.2f us" nomirror ($YTICS)
 set title "Local Clock Offsets over time"
 set key bottom right box
 set label 1 gprintf("99%% = %1.2f us",$NINETYNINE) at graph 0.01,0.3 left front
