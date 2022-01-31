@@ -35,13 +35,13 @@ my $time = scalar(gmtime());
 my $THISHOST = $ENV{THISHOST};
 my $FREQ = $ENV{FREQ};
 
-my @remotes = glob("remote-statistics.*.svg");
+my @remotes = glob("remote-statistics.*.{svg,png}");
 my $ALL_REMOTES = "";
 my $ALL_REMOTES_WITH_LINK = "";
 foreach my $r (@remotes) {
   my $remote = $r;
   $remote =~ s/^remote-statistics\.//;
-  $remote =~ s/\.svg$//;
+  $remote =~ s/\.(svg|png)$//;
   my $key = $remote;
   $key =~ s/_/:/g;
   my $desc = $titles{"statistics.$key"} || $key;
