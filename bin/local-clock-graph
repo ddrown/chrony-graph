@@ -34,6 +34,7 @@ set output "local-clock-stddev.png"
 set grid
 set xlabel "Time"
 set format x "%d-%H:%M"
+set logscale y
 set xtic rotate by -45 scale 0
 set ytics format "%1.2f us" nomirror
 set title "local clock stddev"
