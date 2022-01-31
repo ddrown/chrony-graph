@@ -1,5 +1,11 @@
 #!/bin/bash
 
+LINSCALELIMIT=`../bin/linscalelimit 1 5 tracking.log | ../bin/mul 1000000`
+
+# echo $LINSCALELIMIT
+
+YTICS=`../bin/linlogytics $LINSCALELIMIT`
+
 gnuplot <<EOF
 set terminal png size 900,600
 set xdata time
@@ -8,8 +14,13 @@ set output "local-clock.png"
 set grid
 set xlabel "Time"
 set format x "%d-%H:%M"
+flogy(y) = ((log(abs(y))-log($LINSCALELIMIT))/log(10)+2)*$LINSCALELIMIT*0.5
+glogy(y) = exp((log(10)*(abs(y)/($LINSCALELIMIT)-1)/0.5)+log($LINSCALELIMIT))
+f(y) = (abs(y) < $LINSCALELIMIT) ? y : sgn(y)*flogy(y)
+g(y) = (abs(y) < $LINSCALELIMIT) ? y : sgn(y)*glogy(y)
+set nonlinear y via f(y) inverse g(y)
 set xtic rotate by -45 scale 0
-set ytics format "%1.2f us" nomirror
+set ytics format "%1.2f us" nomirror ($YTICS)
 set y2tics format "%2.3f ppm" nomirror
 set title "local clock"
 set key bottom right box

@@ -1,0 +1,20 @@
+#!/usr/bin/perl
+
+use strict;
+
+my $linscalelimit = shift;
+
+for (my $i = 1000000; $i >= 1; $i /= 10)
+{
+  printf "%f, ", -($linscalelimit * $i);
+}
+
+printf "%f, ", -($linscalelimit * 0.5);
+printf "%f, ", 0;
+printf "%f, ",  ($linscalelimit * 0.5);
+
+for (my $i = 1; $i <= 1000000; $i *= 10)
+{
+  printf "%f, ", ($linscalelimit * $i);
+}
+
