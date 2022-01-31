@@ -53,7 +53,6 @@ fi
 #  echo
 #) | gnuplot
 
-rm remote-statistics.*.{png,svg}
 echo "$titles" | while read file title; do
   imagename=`echo $file | sed 's/:/_/g'`
   measurements_file=`echo $file | sed 's/^statistics/measurements/'`
