@@ -4,6 +4,22 @@ use strict;
 use Cwd;
 use File::Basename;
 
+sub read_hash {
+  my $fn = shift;
+  my $hash = shift;
+  open(my $fh, '<', $fn) or return;
+  while (my $line=<$fh>) {
+    chomp($line);
+    my ($key, $value) = split / /, $line, 2;
+    $hash->{$key} = $value;
+  }
+  close($fh);
+}
+
+my %titles = ();
+read_hash('../titles.common', \%titles);
+read_hash('../titles', \%titles);
+
 my $RUN=cwd();
 $RUN = basename($RUN);
 
@@ -16,10 +32,32 @@ $NOTES =~ s/&/&amp;/g;
 
 my $time = scalar(gmtime());
 
+my $THISHOST = $ENV{THISHOST};
+my $FREQ = $ENV{FREQ};
+
+my @remotes = glob("remote-statistics.*.svg");
+my $ALL_REMOTES = "";
+my $ALL_REMOTES_WITH_LINK = "";
+foreach my $r (@remotes) {
+  my $remote = $r;
+  $remote =~ s/^remote-statistics\.//;
+  $remote =~ s/\.svg$//;
+  my $key = $remote;
+  $key =~ s/_/:/g;
+  my $desc = $titles{"statistics.$key"} || $key;
+  my $img = "<img src=\"$r\" alt=\"Remote clock: $desc\" />";
+  $ALL_REMOTES .= "$img<br />\n";
+  $ALL_REMOTES_WITH_LINK .= "<a href=\"$remote\">$img</a><br />\n";
+}
+
 open(TMPL,"<","index.html.tmpl");
 while(<TMPL>) {
   s/__RUN__/$RUN/g;
   s/__NOTES__/$NOTES/g;
   s/__TIME__/$time/g;
+  s/__THISHOST__/$THISHOST/g;
+  s/__FREQ__/$FREQ/g;
+  s,__ALL_REMOTES__,$ALL_REMOTES,g;
+  s,__ALL_REMOTES_WITH_LINK__,$ALL_REMOTES_WITH_LINK,g;
   print;
 }
