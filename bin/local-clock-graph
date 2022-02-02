@@ -1,4 +1,5 @@
 #!/bin/bash
+TERMINAL=$1
 
 LINSCALELIMIT=`../bin/linscalelimit 1 5 tracking.log | ../bin/mul 1000000`
 
@@ -7,10 +8,10 @@ LINSCALELIMIT=`../bin/linscalelimit 1 5 tracking.log | ../bin/mul 1000000`
 YTICS=`../bin/linlogytics $LINSCALELIMIT`
 
 gnuplot <<EOF
-set terminal png size 900,600
+set terminal $TERMINAL size 900,600
 set xdata time
 set timefmt "%s"
-set output "local-clock.png"
+set output "local-clock.$TERMINAL"
 set grid
 set xlabel "Time"
 set format x "%d-%H:%M"
@@ -38,10 +39,10 @@ ONE=`../bin/percentile 8 1 tracking.log | ../bin/mul 1000000`
 NF_M_F=`echo $NINETYFIVE - $FIVE | bc`
 NN_M_O=`echo $NINETYNINE - $ONE | bc`
 gnuplot <<EOF
-set terminal png size 900,600
+set terminal $TERMINAL size 900,600
 set xdata time
 set timefmt "%s"
-set output "local-clock-stddev.png"
+set output "local-clock-stddev.$TERMINAL"
 set grid
 set xlabel "Time"
 set format x "%d-%H:%M"
@@ -73,10 +74,10 @@ ONE=`../bin/percentile 4 1 tracking.log`
 NF_M_F=`echo $NINETYFIVE - $FIVE | bc`
 NN_M_O=`echo $NINETYNINE - $ONE | bc`
 gnuplot <<EOF
-set terminal png size 900,600
+set terminal $TERMINAL size 900,600
 set xdata time
 set timefmt "%s"
-set output "local-clock-skew.png"
+set output "local-clock-skew.$TERMINAL"
 set grid
 set xlabel "Time"
 set format x "%d-%H:%M"

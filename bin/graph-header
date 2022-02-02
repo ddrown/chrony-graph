@@ -1,10 +1,11 @@
 #!/bin/bash
 
-FILENAME=$1
-LINSCALELIMIT=$2
-FORMAT=$3
-TITLE=$4
-CUSTOM=$5
+BASENAME=$1
+TERMINAL=$2
+LINSCALELIMIT=$3
+FORMAT=$4
+TITLE=$5
+CUSTOM=$6
 
 YTICS=`../bin/linlogytics $LINSCALELIMIT`
 
@@ -12,10 +13,10 @@ YTICS=`../bin/linlogytics $LINSCALELIMIT`
 #echo $YTICS 1>&2
 
 cat <<EOF
-set terminal png size 900,600
+set terminal $TERMINAL size 900,600
 set xdata time
 set timefmt "%s"
-set output "$FILENAME"
+set output "$BASENAME.$TERMINAL"
 set grid
 set xlabel "Time"
 set format x "%d-%H:%M"
