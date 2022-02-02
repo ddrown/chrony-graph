@@ -58,7 +58,7 @@ echo "$titles" | while read file title; do
   imagename=`echo $file | sed 's/:/_/g'`
   measurements_file=`echo $file | sed 's/^statistics/measurements/'`
   # Run only (1) for existing files and (2) once, so `titles.*` can be a sub-/superset
-  if [ -f "$file" -a ! -f "remote-${imagename}.png" -a ! -f "remote-${imagename}.svg" ]; then
+  if [ -f "$file" -a ! -f "remote-${imagename}.$TERMINAL" ]; then
     (
       if [ -f $measurements_file ]; then
         FIFTY=`../bin/percentile 10 50 $measurements_file | ../bin/mul 1000000`
