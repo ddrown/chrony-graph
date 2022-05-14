@@ -166,5 +166,3 @@ EOF
 if [ -x custom-plot ]; then
   ./custom-plot
 fi
-
-../bin/copy-to-website
