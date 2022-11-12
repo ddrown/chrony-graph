@@ -40,6 +40,10 @@ my $ALL_REMOTES = "";
 my $ALL_REMOTES_WITH_LINK = "";
 foreach my $r (@remotes) {
   my $remote = $r;
+  my $link = $r;
+  if ($ENV["GNUPLOT_TERMINALS"] == "png svg") {
+    $link =~ s/png$/svg/;
+  }
   $remote =~ s/^remote-statistics\.//;
   $remote =~ s/\.(svg|png)$//;
   my $key = $remote;
@@ -47,7 +51,7 @@ foreach my $r (@remotes) {
   my $desc = $titles{"statistics.$key"} || $key;
   my $img = "<img src=\"$r\" alt=\"Remote clock: $desc\" />";
   $ALL_REMOTES .= "$img<br />\n";
-  $ALL_REMOTES_WITH_LINK .= "<a href=\"$remote\">$img</a><br />\n";
+  $ALL_REMOTES_WITH_LINK .= "<a href=\"$link\">$img</a><br />\n";
 }
 
 open(TMPL,"<","index.html.tmpl");
