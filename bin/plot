@@ -3,165 +3,165 @@
 export GDFONTPATH=/usr/share/fonts/liberation
 export GNUPLOT_DEFAULT_GDFONT=LiberationSans-Regular
 
-../bin/local-clock-graph
-../bin/offset-graph
-../bin/diff-freq-graph
-../bin/skew-graph
+rm remote-statistics.*.{png,svg} 2>/dev/null
 
-NINETYFIVE=`../bin/percentile 3 95 tracking.log`
-NINETYNINE=`../bin/percentile 3 99 tracking.log`
-FIVE=`../bin/percentile 3 5 tracking.log`
-ONE=`../bin/percentile 3 1 tracking.log`
-NF_M_F=`echo $NINETYFIVE - $FIVE | bc`
-NN_M_O=`echo $NINETYNINE - $ONE | bc`
-gnuplot <<EOF
-set terminal png size 900,600
-set xdata time
-set timefmt "%s"
-set output "percentiles.png"
-set grid
-set xlabel "Time"
-set format x "%d-%H:%M"
-set xtic rotate by -45 scale 0
-set ytics format "%1.3f ppm" nomirror
-set title "Local Clock range"
-set key bottom right box
-set label 1 gprintf("99%% = $NINETYNINE ppm",99) at graph 0.01,0.3 left front
-set label 2 gprintf("95%% = $NINETYFIVE ppm",95) at graph 0.01,0.25 left front
-set label 3 gprintf(" 5%% = $FIVE ppm",5) at graph 0.01,0.2 left front
-set label 4 gprintf(" 1%% = $ONE ppm",1) at graph 0.01,0.15 left front
-set label 5 gprintf("95%% - 5%% = $NF_M_F ppm",90) at graph 0.01,0.1 left front
-set label 6 gprintf("99%% - 1%% = $NN_M_O ppm",98) at graph 0.01,0.05 left front
-set lmargin 12
-set rmargin 12
-plot \
- "tracking.log" using 1:4 title "local clock error" with linespoints, \
- $NINETYNINE title "99th percentile", \
- $NINETYFIVE title "95th percentile", \
- $FIVE title "5th percentile", \
- $ONE title "1st percentile"
+for TERMINAL in $GNUPLOT_TERMINALS
+do
+  NINETYFIVE=`../bin/percentile 3 95 tracking.log`
+  NINETYNINE=`../bin/percentile 3 99 tracking.log`
+  FIVE=`../bin/percentile 3 5 tracking.log`
+  ONE=`../bin/percentile 3 1 tracking.log`
+  NF_M_F=`echo $NINETYFIVE - $FIVE | bc`
+  NN_M_O=`echo $NINETYNINE - $ONE | bc`
+  gnuplot <<EOF
+  set terminal $TERMINAL size 900,600
+  set xdata time
+  set timefmt "%s"
+  set output "percentiles.$TERMINAL"
+  set grid
+  set xlabel "Time"
+  set format x "%d-%H:%M"
+  set xtic rotate by -45 scale 0
+  set ytics format "%1.3f ppm" nomirror
+  set title "Local Clock range"
+  set key bottom right box
+  set label 1 gprintf("99%% = $NINETYNINE ppm",99) at graph 0.01,0.3 left front
+  set label 2 gprintf("95%% = $NINETYFIVE ppm",95) at graph 0.01,0.25 left front
+  set label 3 gprintf(" 5%% = $FIVE ppm",5) at graph 0.01,0.2 left front
+  set label 4 gprintf(" 1%% = $ONE ppm",1) at graph 0.01,0.15 left front
+  set label 5 gprintf("95%% - 5%% = $NF_M_F ppm",90) at graph 0.01,0.1 left front
+  set label 6 gprintf("99%% - 1%% = $NN_M_O ppm",98) at graph 0.01,0.05 left front
+  set lmargin 12
+  set rmargin 12
+  plot \
+  "tracking.log" using 1:4 title "local clock error" with linespoints, \
+  $NINETYNINE title "99th percentile", \
+  $NINETYFIVE title "95th percentile", \
+  $FIVE title "5th percentile", \
+  $ONE title "1st percentile"
 EOF
 
-NINETYFIVE=`../bin/percentile 5 95 tracking.log | ../bin/mul 1000000`
-NINETYNINE=`../bin/percentile 5 99 tracking.log | ../bin/mul 1000000`
-FIVE=`../bin/percentile 5 5 tracking.log | ../bin/mul 1000000`
-ONE=`../bin/percentile 5 1 tracking.log | ../bin/mul 1000000`
-NF_M_F=`echo $NINETYFIVE - $FIVE | bc`
-NN_M_O=`echo $NINETYNINE - $ONE | bc`
-LINSCALELIMIT=`../bin/linscalelimit 1 5 tracking.log | ../bin/mul 1000000`
-YTICS=`../bin/linlogytics $LINSCALELIMIT`
-gnuplot <<EOF
-set terminal png size 900,600
-set xdata time
-set timefmt "%s"
-set output "percentiles-offset.png"
-set grid
-set xlabel "Time"
-set format x "%d-%H:%M"
-flogy(y) = ((log(abs(y))-log($LINSCALELIMIT))/log(10)+2)*$LINSCALELIMIT*0.5
-glogy(y) = exp((log(10)*(abs(y)/($LINSCALELIMIT)-1)/0.5)+log($LINSCALELIMIT))
-f(y) = (abs(y) < $LINSCALELIMIT) ? y : sgn(y)*flogy(y)
-g(y) = (abs(y) < $LINSCALELIMIT) ? y : sgn(y)*glogy(y)
-set nonlinear y via f(y) inverse g(y)
-set xtic rotate by -45 scale 0
-set ytics format "%1.2f us" nomirror ($YTICS)
-set title "Local Clock Offsets over time"
-set key bottom right box
-set label 1 gprintf("99%% = %1.2f us",$NINETYNINE) at graph 0.01,0.3 left front
-set label 2 gprintf("95%% = %1.2f us",$NINETYFIVE) at graph 0.01,0.25 left front
-set label 3 gprintf(" 5%% = %1.2f us",$FIVE) at graph 0.01,0.2 left front
-set label 4 gprintf(" 1%% = %1.2f us",$ONE) at graph 0.01,0.15 left front
-set label 5 gprintf("95%% - 5%% = %1.2f us", $NF_M_F) at graph 0.01,0.1 left front
-set label 6 gprintf("99%% - 1%% = %1.2f us", $NN_M_O) at graph 0.01,0.05 left front
-set lmargin 12
-set rmargin 12
-plot \
- "tracking.log" using 1:(\$6 * 1000000) title "local clock offset" with linespoints, \
- $NINETYNINE title "99th percentile", \
- $NINETYFIVE title "95th percentile", \
- $FIVE title "5th percentile", \
- $ONE title "1st percentile"
+  NINETYFIVE=`../bin/percentile 5 95 tracking.log | ../bin/mul 1000000`
+  NINETYNINE=`../bin/percentile 5 99 tracking.log | ../bin/mul 1000000`
+  FIVE=`../bin/percentile 5 5 tracking.log | ../bin/mul 1000000`
+  ONE=`../bin/percentile 5 1 tracking.log | ../bin/mul 1000000`
+  NF_M_F=`echo $NINETYFIVE - $FIVE | bc`
+  NN_M_O=`echo $NINETYNINE - $ONE | bc`
+  LINSCALELIMIT=`../bin/linscalelimit 1 5 tracking.log | ../bin/mul 1000000`
+  YTICS=`../bin/linlogytics $LINSCALELIMIT`
+  gnuplot <<EOF
+  set terminal $TERMINAL size 900,600
+  set xdata time
+  set timefmt "%s"
+  set output "percentiles-offset.$TERMINAL"
+  set grid
+  set xlabel "Time"
+  set format x "%d-%H:%M"
+  flogy(y) = ((log(abs(y))-log($LINSCALELIMIT))/log(10)+2)*$LINSCALELIMIT*0.5
+  glogy(y) = exp((log(10)*(abs(y)/($LINSCALELIMIT)-1)/0.5)+log($LINSCALELIMIT))
+  f(y) = (abs(y) < $LINSCALELIMIT) ? y : sgn(y)*flogy(y)
+  g(y) = (abs(y) < $LINSCALELIMIT) ? y : sgn(y)*glogy(y)
+  set nonlinear y via f(y) inverse g(y)
+  set xtic rotate by -45 scale 0
+  set ytics format "%1.2f us" nomirror ($YTICS)
+  set title "Local Clock Offsets over time"
+  set key bottom right box
+  set label 1 gprintf("99%% = %1.2f us",$NINETYNINE) at graph 0.01,0.3 left front
+  set label 2 gprintf("95%% = %1.2f us",$NINETYFIVE) at graph 0.01,0.25 left front
+  set label 3 gprintf(" 5%% = %1.2f us",$FIVE) at graph 0.01,0.2 left front
+  set label 4 gprintf(" 1%% = %1.2f us",$ONE) at graph 0.01,0.15 left front
+  set label 5 gprintf("95%% - 5%% = %1.2f us", $NF_M_F) at graph 0.01,0.1 left front
+  set label 6 gprintf("99%% - 1%% = %1.2f us", $NN_M_O) at graph 0.01,0.05 left front
+  set lmargin 12
+  set rmargin 12
+  plot \
+  "tracking.log" using 1:(\$6 * 1000000) title "local clock offset" with linespoints, \
+  $NINETYNINE title "99th percentile", \
+  $NINETYFIVE title "95th percentile", \
+  $FIVE title "5th percentile", \
+  $ONE title "1st percentile"
 EOF
 
-# for nanosecond level:
-#../bin/histogram 5 1000000000 <tracking.log >tracking.log.history
-../bin/histogram 5 1000000 <tracking.log >tracking.log.history
-SEVENTYFIVE=`../bin/percentile 5 75 tracking.log | ../bin/mul 1000000`
-TWENTYFIVE=`../bin/percentile 5 25 tracking.log | ../bin/mul 1000000`
+  # for nanosecond level:
+  #../bin/histogram 5 1000000000 <tracking.log >tracking.log.history
+  ../bin/histogram 5 1000000 <tracking.log >tracking.log.history
+  SEVENTYFIVE=`../bin/percentile 5 75 tracking.log | ../bin/mul 1000000`
+  TWENTYFIVE=`../bin/percentile 5 25 tracking.log | ../bin/mul 1000000`
 
-gnuplot <<EOF
-set terminal png size 900,600
-set output "offset-histogram.png"
-set grid
-set xtic rotate by -45 scale 0
-set title "Local Clock Offsets - Histogram"
-set xtics format "%1.1f us" nomirror
-set label 1 gprintf("99%% = %1.2f us",$NINETYNINE) at $NINETYNINE, graph 0.91 left front offset 1,-1
-set style arrow 1 nohead 
-set arrow from $NINETYNINE,0 to $NINETYNINE,graph 0.91 as 1
-set label 2 gprintf(" 1%% = %1.2f us",$ONE) at $ONE, graph 0.91 right front offset -1,-1
-set style arrow 2 nohead
-set arrow from $ONE,0 to $ONE,graph 0.91 as 2
-set label 3 gprintf("25%% = %1.2f us",$TWENTYFIVE) at $TWENTYFIVE, graph 0.7 right front offset -1,-1
-set style arrow 3 nohead
-set arrow from $TWENTYFIVE,0 to $TWENTYFIVE,graph 0.7 as 3
-set label 4 gprintf("75%% = %1.2f us",$SEVENTYFIVE) at $SEVENTYFIVE, graph 0.7 left front offset 1,-1
-set style arrow 4 nohead
-set arrow from $SEVENTYFIVE,0 to $SEVENTYFIVE,graph 0.7 as 4
-set xrange [-500:500]
-set key off
-set lmargin 12
-set rmargin 12
-plot \
- "tracking.log.history" using 1:2 title "histogram" with boxes
+  gnuplot <<EOF
+  set terminal $TERMINAL size 900,600
+  set output "offset-histogram.$TERMINAL"
+  set grid
+  set xtic rotate by -45 scale 0
+  set title "Local Clock Offsets - Histogram"
+  set xtics format "%1.1f us" nomirror
+  set label 1 gprintf("99%% = %1.2f us",$NINETYNINE) at $NINETYNINE, graph 0.91 left front offset 1,-1
+  set style arrow 1 nohead 
+  set arrow from $NINETYNINE,0 to $NINETYNINE,graph 0.91 as 1
+  set label 2 gprintf(" 1%% = %1.2f us",$ONE) at $ONE, graph 0.91 right front offset -1,-1
+  set style arrow 2 nohead
+  set arrow from $ONE,0 to $ONE,graph 0.91 as 2
+  set label 3 gprintf("25%% = %1.2f us",$TWENTYFIVE) at $TWENTYFIVE, graph 0.7 right front offset -1,-1
+  set style arrow 3 nohead
+  set arrow from $TWENTYFIVE,0 to $TWENTYFIVE,graph 0.7 as 3
+  set label 4 gprintf("75%% = %1.2f us",$SEVENTYFIVE) at $SEVENTYFIVE, graph 0.7 left front offset 1,-1
+  set style arrow 4 nohead
+  set arrow from $SEVENTYFIVE,0 to $SEVENTYFIVE,graph 0.7 as 4
+  set xrange [-500:500]
+  set key off
+  set lmargin 12
+  set rmargin 12
+  plot \
+  "tracking.log.history" using 1:2 title "histogram" with boxes
 EOF
 
-# optional GPS tracking
-#gnuplot <<EOF
-#set terminal png size 900,600
-#set xdata time
-#set timefmt "%s"
-#set output "gps-lock.png"
-#set grid
-#set xlabel "Time"
-#set format x "%d-%H:%M"
-#set xtic rotate by -45 scale 0
-#set ytics format "%1.0f seconds/hr with lock" nomirror
-#set title "Seconds per hour spent in GPS lock"
-#set key bottom right box
-#plot \
-# "gps-lock" using 1:2 title "second" with lines
-#EOF
-#
-#../bin/histogram-snr <snr-history >snr-history.history
-#gnuplot <<EOF
-#set terminal png size 900,600
-#set output "gps-snr-histogram.png"
-#set grid
-#set xtic rotate by -45 scale 0
-#set title "GPS SNR histogram"
-#set xtics format "%1.1fdB snr" nomirror
-#set key off
-#plot \
-# "snr-history.history" using 1:2 title "histogram" with boxes
-#EOF
-#
-#../bin/snr-hourly snr-history >snr-history.hourly
-#gnuplot <<EOF
-#set terminal png size 900,600
-#set xdata time
-#set timefmt "%s"
-#set output "gps-snr-hourly.png"
-#set grid
-#set xlabel "Time"
-#set format x "%d-%H:%M"
-#set xtic rotate by -45 scale 0
-#set ytics format "%1.0f %% of time" nomirror
-#set title "Percent of time satellites spent at 0 snr"
-#set key bottom right box
-#plot \
-# "snr-history.hourly" using 1:(\$2 / (\$2 + \$3) * 100) title "signal" with lines
-#EOF
+  # optional GPS tracking
+  #gnuplot <<EOF
+  #set terminal $TERMINAL size 900,600
+  #set xdata time
+  #set timefmt "%s"
+  #set output "gps-lock.$TERMINAL"
+  #set grid
+  #set xlabel "Time"
+  #set format x "%d-%H:%M"
+  #set xtic rotate by -45 scale 0
+  #set ytics format "%1.0f seconds/hr with lock" nomirror
+  #set title "Seconds per hour spent in GPS lock"
+  #set key bottom right box
+  #plot \
+  # "gps-lock" using 1:2 title "second" with lines
+  #EOF
+  #
+  #../bin/histogram-snr <snr-history >snr-history.history
+  #gnuplot <<EOF
+  #set terminal $TERMINAL size 900,600
+  #set output "gps-snr-histogram.$TERMINAL"
+  #set grid
+  #set xtic rotate by -45 scale 0
+  #set title "GPS SNR histogram"
+  #set xtics format "%1.1fdB snr" nomirror
+  #set key off
+  #plot \
+  # "snr-history.history" using 1:2 title "histogram" with boxes
+  #EOF
+  #
+  #../bin/snr-hourly snr-history >snr-history.hourly
+  #gnuplot <<EOF
+  #set terminal $TERMINAL size 900,600
+  #set xdata time
+  #set timefmt "%s"
+  #set output "gps-snr-hourly.$TERMINAL"
+  #set grid
+  #set xlabel "Time"
+  #set format x "%d-%H:%M"
+  #set xtic rotate by -45 scale 0
+  #set ytics format "%1.0f %% of time" nomirror
+  #set title "Percent of time satellites spent at 0 snr"
+  #set key bottom right box
+  #plot \
+  # "snr-history.hourly" using 1:(\$2 / (\$2 + \$3) * 100) title "signal" with lines
+  #EOF
+done
 
 if [ -x custom-plot ]; then
   ./custom-plot

@@ -1,4 +1,5 @@
 #!/bin/bash
+TERMINAL=$1
 
 LINSCALELIMIT=1
 for stat in statistics.*; do
@@ -8,7 +9,7 @@ done
 LINSCALELIMIT=`echo $LINSCALELIMIT | ../bin/mul 1000000`
 
 (
-../bin/graph-header all-offset.png $LINSCALELIMIT "%1.0f us" "all clocks (offset)" ""
+../bin/graph-header all-offset $TERMINAL $LINSCALELIMIT "%1.0f us" "all clocks (offset)" ""
 ../bin/foreach-stat "'__FILE__' using 1:(\$4*1000000) title '__TITLE__' with line \\"
 echo 
 ) | gnuplot
@@ -24,7 +25,7 @@ else
 fi
 
 #(
-#  ../bin/graph-header remote-strat1.png 1 "%1.0f us" "offset of remote strat1s" ""
+#  ../bin/graph-header remote-strat1 $TERMINAL "%1.0f µs" "Offset Of Remote Stratum-1s" ""
 #  i=0
 #  echo "$titles" | while read file title; do
 #    if [ $i != 0 ]; then
@@ -37,7 +38,7 @@ fi
 #) | gnuplot
 #
 #(
-#  ../bin/graph-header remote-strat1-downstream.png 1 "%1.0f us" "offset-rtt/2 of remote strat1s" ""
+#  ../bin/graph-header remote-strat1-downstream $TERMINAL "%1.0f µs" "Offset-RTT/2 Of Remote Stratum-1s" ""
 #  i=0
 #  echo "$titles" | while read file title; do
 #    measurements_file=`echo $file | sed 's/^statistics/measurements/'`
@@ -57,13 +58,13 @@ echo "$titles" | while read file title; do
   imagename=`echo $file | sed 's/:/_/g'`
   measurements_file=`echo $file | sed 's/^statistics/measurements/'`
   # Run only (1) for existing files and (2) once, so `titles.*` can be a sub-/superset
-  if [ -f "$file" -a ! -f "remote-${imagename}.png" -a ! -f "remote-${imagename}.svg" ]; then
+  if [ -f "$file" -a ! -f "remote-${imagename}.$TERMINAL" ]; then
     (
       if [ -f $measurements_file ]; then
         FIFTY=`../bin/percentile 10 50 $measurements_file | ../bin/mul 1000000`
         CUSTOM="set label 1 gprintf('50%% = $FIFTY us',50) at graph 0.01,0.05 left front"
         LINSCALELIMIT=`../bin/linscalelimit 1 10 $measurements_file | ../bin/mul 1000000`
-        ../bin/graph-header remote-${imagename}.png $LINSCALELIMIT "%1.0f us" "offset of $title" "$CUSTOM"
+        ../bin/graph-header remote-${imagename} $TERMINAL $LINSCALELIMIT "%1.0f us" "offset of $title" "$CUSTOM"
         echo "'$measurements_file' using 1:(\$11*1000000) title 'offset' with line, \\"
         echo "'$measurements_file' using 1:((\$11+\$12/2)*1000000) title 'offset+rtt/2' with line, \\"
         echo "'$measurements_file' using 1:((\$11-\$12/2)*1000000) title 'offset-rtt/2' with line, \\"
@@ -72,7 +73,7 @@ echo "$titles" | while read file title; do
         FIFTY=`../bin/percentile 3 50 $file | ../bin/mul 1000000`
         CUSTOM="set label 1 gprintf('50%% = $FIFTY us',50) at graph 0.01,0.05 left front"
         LINSCALELIMIT=`../bin/linscalelimit 1 3 $file | ../bin/mul 1000000`
-        ../bin/graph-header remote-${imagename}.png $LINSCALELIMIT "%1.0f us" "offset of $title" "$CUSTOM"
+        ../bin/graph-header remote-${imagename} $TERMINAL $LINSCALELIMIT "%1.0f us" "offset of $title" "$CUSTOM"
         echo "'$file' using 1:(\$4*1000000) title 'offset' with line, \\"
         echo "$FIFTY title '50th percentile'"
       fi
